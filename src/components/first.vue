@@ -6,11 +6,11 @@
         <img src='../assets/logo.png' class="logo">
         <img src='../assets/2.jpg' class="image2">
       </div>
-      <el-row :gutter="20">
-        <el-col :span="8"><div>官网首页</div></el-col>
-        <el-col :span="8"><div>产品介绍</div></el-col>
-        <el-col :span="8"><div>关于我们</div></el-col>
-        <el-col :span="8"><div>登录</div></el-col>
+      <el-row :gutter="12" >
+        <el-col :span="10"><div>官网首页</div></el-col>
+        <el-col :span="10"><div>产品介绍</div></el-col>
+        <el-col :span="10"><div>关于我们</div></el-col>
+        <el-col :span="10"><div>登录</div></el-col>
       </el-row>
   </el-header>
   <!-- 主体区-->
@@ -49,8 +49,16 @@ export default {}
 
 <style lang="less" scoped>/*:scope指在当前组件内生效*/
 .el-row{
+    background-color: #3698F5;
     padding-right: 0;
-    align-items: center
+    .el-col{
+        width: 121px;
+        >div{
+            display: flex;
+            align-items: center;
+            font-size: 26px;
+        }
+    }
 }
 .el-header{
     background-color: red;
@@ -65,7 +73,6 @@ export default {}
         .logo{
             width: 85px;
             height: 48px;
-            margin-buttom: 24px;
         }
         .image2{
             width: 315px;
@@ -77,13 +84,15 @@ export default {}
     background-color: slategray;
     width: 100%;
     .main_title{
+        position: absolute;
         right: 50%;
-        font-size: 32px;
+        top:540px;
+        font-size: 60px;
     }
     >img{
         width: 100%;
         height: 429px;
-        padding-top: 0;
+        margin: 0;
     }
 }
 .el-footer{
@@ -102,15 +111,15 @@ export default {}
 }
 .index{
     border: 1px solid #3698F5;
-    width: 200px;
-    height: 200px;
-    margin: 30px;
+    width: 300px;
+    height: 300px;
+    margin: 84.5px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
     >span{
-        font-size: 30px;
+        font-size: 50px;
     }
 }
 </style>
