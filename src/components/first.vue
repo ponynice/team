@@ -6,11 +6,27 @@
         <img src='../assets/logo.png' class="logo">
         <img src='../assets/2.jpg' class="image2">
       </div>
-      <el-row :gutter="12" >
-        <el-col :span="10"><div>官网首页</div></el-col>
-        <el-col :span="10"><div>产品介绍</div></el-col>
-        <el-col :span="10"><div>关于我们</div></el-col>
-        <el-col :span="10"><div>登录</div></el-col>
+      <el-row :gutter="15">
+        <el-col :span="10">
+            <div>
+                <el-link>官网首页</el-link>
+            </div>
+        </el-col>
+        <el-col :span="10">
+            <div>
+                <el-link>产品介绍</el-link>
+            </div>
+        </el-col>
+        <el-col :span="10">
+            <div>
+                <el-link>关于我们</el-link>
+            </div>
+        </el-col>
+        <el-col :span="10">
+            <div>
+                <el-link @click="showLogin()">登录</el-link>
+            </div>
+        </el-col>
       </el-row>
   </el-header>
   <!-- 主体区-->
@@ -39,40 +55,65 @@
   <!-- 末尾区-->
   <el-footer>
       <img src='../assets/3.jpg'>
+      <div class="footer_text">
+        <div class="text_left">
+          <span>联系我们 | 法律政策 | 隐私权限</span>
+        </div>
+        <div class="text_right">
+          <span>2021 Intergrowth Corporation XX有限公司（团体名称）</span>
+        </div>
+      </div>  
   </el-footer>
 </el-container>
 </template>
 
 <script>
-export default {}
+export default {
+   data() {
+        return {
+             login_image: fasle
+        } 
+    },
+    methods:{
+        showLogin(){
+            this.login_image=!this.login_image
+            console.log(this.login_image)
+        }
+    }
+}
 </script>
 
 <style lang="less" scoped>/*:scope指在当前组件内生效*/
 .el-row{
-    background-color: #3698F5;
-    padding-right: 0;
-    .el-col{
+    /*background-color: #3698F5;*/
+    .el-col{ 
         width: 121px;
         >div{
-            display: flex;
-            align-items: center;
-            font-size: 26px;
+           height: 74px;
+           line-height: 74px;
+         
+        }
+        .el-link{
+            font-size:26px;
         }
     }
 }
 .el-header{
-    background-color: red;
+    /*background-color: red;*/
     width: 100%;
     height:74px !important;
     display: flex;
     justify-content: space-between;
-    padding-left: 0;
+    padding-left: 12px;
     .header_logo{
         width: 413px;
         height: 74px;
+        display: flex;
         .logo{
             width: 85px;
             height: 48px;
+            position: relative;
+            margin-top: 16px;
         }
         .image2{
             width: 315px;
@@ -81,12 +122,14 @@ export default {}
     }
 }
 .el-main{
-    background-color: slategray;
+    /*background-color: slategray;*/
     width: 100%;
+    height: 100%;
+    padding: 0;
     .main_title{
         position: absolute;
-        right: 50%;
-        top:540px;
+        top:520px;
+        right:860px;
         font-size: 60px;
     }
     >img{
@@ -96,11 +139,28 @@ export default {}
     }
 }
 .el-footer{
-    background-color: salmon;
+    /*background-color: salmon;*/
     width: 100%;
+    height:45px !important;
+    padding: 0;
     >img{
         width: 100%;
-        padding: 0;
+        margin: 0;
+    }
+    >span{
+        font-size:20px;
+    }
+    .footer_text{
+        display: flex;
+        justify-content: space-between;
+        margin-top: -45px;
+        color:white;
+        .text_left{
+            margin-left:64px;
+        }
+        .text_right{
+            margin-right:74px;
+        }
     }
 }
 .el-container{
@@ -113,11 +173,14 @@ export default {}
     border: 1px solid #3698F5;
     width: 300px;
     height: 300px;
-    margin: 84.5px;
+    margin-left: 84.5px;
+    margin-right:84.5px;
+    margin-top:105px;
+    margin-bottom: 57px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-evenly;
     >span{
         font-size: 50px;
     }

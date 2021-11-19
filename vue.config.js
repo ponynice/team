@@ -15,17 +15,5 @@ module.exports = {
     devServer: {
         // 调试端口
         // port: 8989
-    },
-    //其他配置....
-    chainWebpack: config => {
-        config.module
-            .rule('scss')
-            .test(/\.scss$/)
-            .oneOf('vue')
-            .use('px2rem-loader')
-            .loader('px2rem-loader')
-            .before('postcss-loader') // this makes it work.
-            .options({ remUnit: 192, remPrecision: 8 })
-            .end()
     }
 }
