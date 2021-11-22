@@ -24,7 +24,7 @@
         </el-col>
         <el-col :span="10">
             <div>
-                <el-link @click="showLogin()">登录</el-link>
+                <el-link @click="toLogin()">登录</el-link>
             </div>
         </el-col>
       </el-row>
@@ -75,9 +75,8 @@ export default {
         } 
     },
     methods:{
-        showLogin(){
-            this.login_image=!this.login_image
-            console.log(this.login_image)
+        toLogin(){
+            this.$router.push('/login')
         }
     }
 }

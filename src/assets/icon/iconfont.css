@@ -1,32 +1,67 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2947114 */
-  src: url('iconfont.woff2?t=1637204765041') format('woff2'),
-       url('iconfont.woff?t=1637204765041') format('woff'),
-       url('iconfont.ttf?t=1637204765041') format('truetype');
+  src: url('iconfont.woff2?t=1637589945197') format('woff2'),
+       url('iconfont.woff?t=1637589945197') format('woff'),
+       url('iconfont.ttf?t=1637589945197') format('truetype');
 }
 
 .iconfont {
   font-family: "iconfont" !important;
-  font-size: 165px;
+  font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #3698F5;
+}
+
+.icon-shenfenzheng:before {
+  content: "\e886";
+  color: rgb(144, 144, 144);
+}
+
+.icon-yaoshiup:before {
+  content: "\e641";
+  color: rgb(144, 144, 144);
+  font-size: 33px;
+}
+
+.icon-yuechi:before {
+  content: "\e61d";
+  color: rgb(144, 144, 144);
+  font-size: 33px;
+}
+
+.icon-shouji:before {
+  content: "\e604";
+  color: rgb(144, 144, 144);
+}
+
+.icon-yonghu1:before {
+  content: "\e60a";
+  color: rgb(144, 144, 144);
+  font-size: 33px;
 }
 
 .icon-gerenmubiao:before {
   content: "\e64e";
+  color: rgb(54, 152, 245);
+  font-size: 168px;
 }
 
 .icon-tongji:before {
   content: "\e878";
+  color: rgb(54, 152, 245);
+  font-size: 168px;
 }
 
 .icon-qiche:before {
   content: "\e603";
+  color: rgb(54, 152, 245);
+  font-size: 168px;
 }
 
 .icon-shipin:before {
   content: "\e85f";
+  color: rgb(54, 152, 245);
+  font-size: 168px;
 }
 
