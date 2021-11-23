@@ -6,7 +6,7 @@
         <div class="LoginForm">
             <div class="title">
                 <span class="big">登 录</span>
-                <span class="small">/注 册</span>
+                <span class="small" @click="toRegister">/注 册</span>
             </div>
             <el-form :model="LoginForm" :rules="LoginFormRules">
                 <!--用户名-->
@@ -44,6 +44,11 @@ export default {
                     { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
                 ]
             }
+        }
+    },
+    methods:{
+        toRegister(){
+            this.$router.push('/register')
         }
     }
 }

@@ -6,16 +6,12 @@
         <div class="RegisterForm">
             <div class="title">
                 <span class="big">注 册</span>
-                <span class="small">/登 录</span>
+                <span class="small" @click="toLogin">/登 录</span>
             </div>
             <el-form :model="RegisterForm" :rules="RegisterFormRules">
-                <!--手机号-->
-                <el-form-item class="tele"  prop="tele">
-                    <el-input v-model="RegisterForm.tele" placeholder="请输入手机号" prefix-icon="iconfont icon-shouji"></el-input>
-                </el-form-item>
-                <!--验证码-->
-                <el-form-item class="verification"  prop="verification">
-                    <el-input v-model="RegisterForm.verification" placeholder="请输入验证码" prefix-icon="iconfont icon-shenfenzheng" ></el-input>
+                <!--用户名-->
+                <el-form-item class="username"  prop="username">
+                    <el-input v-model="RegisterForm.username" placeholder="请输入登录用户名" prefix-icon="iconfont icon-yonghu1" ></el-input>
                 </el-form-item>
                 <!--密码-->
                 <el-form-item class="newpassword"  prop="newpassword">
@@ -48,19 +44,14 @@ export default {
             };
         return{
             RegisterForm:{
-                tele:'',
-                verification:'',
+                username:'',
                 newpassword:'',
                 rnewpassword:''
             },
             RegisterFormRules:{
-                tele:[
-                    { required: true, message: '请输入手机号', trigger: 'blur' },
+                username:[
+                    { required: true, message: '请输入登录用户名', trigger: 'blur' },
                     { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
-                ],
-                verification:[
-                    { required: true, message: '请输入验证码', trigger: 'blur' },
-                    { min: 6, max: 6, message: '长度为6个字符', trigger: 'blur' }
                 ],
                 newpassword:[
                     { required: true, message: '请输入密码', trigger: 'blur' },
@@ -73,6 +64,11 @@ export default {
                 ]
             }
         }
+    },
+    methods:{
+        toLogin(){
+            this.$router.push('/login')
+        }
     }
 }
 </script>
@@ -84,17 +80,14 @@ export default {
     z-index:-1;
     position: absolute;
 }
-.tele{
-    margin-top: 43px;
-}
-.verification{
-    margin-top: 36px;
+.username{
+    margin-top: 51px;
 }
 .newpassword{
-    margin-top: 36px;
+    margin-top: 41px;
 }
 .rnewpassword{
-    margin-top: 36px;
+    margin-top: 41px;
 }
 /*用>>>和/deep/*/
 .el-input{
@@ -113,8 +106,8 @@ export default {
     z-index:1;
     position: absolute;
     left: 230px;
-    top: 255px;
-    height: 554px;
+    top: 264px;
+    height: 474px;
     width: 442px;
     box-sizing: border-box;
     .title{
