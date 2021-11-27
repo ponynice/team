@@ -42,11 +42,11 @@
             <i class="iconfont icon-qiche"></i>
             <span>关键点检测</span>
         </div>
-        <div class="index tongji">
+        <div class="index tongji" @click="tongji">
             <i class="iconfont icon-tongji"></i>
             <span>流量统计</span>
         </div>
-        <div class="index shipin">
+        <div class="index shipin" @click="shipin">
             <i class="iconfont icon-shipin"></i>
             <span>视频摘要</span>
         </div>
@@ -69,14 +69,16 @@
 
 <script>
 export default {
-   data() {
-        return {
-             login_image: fasle
-        } 
-    },
+   data() {},
     methods:{
         toLogin(){
             this.$router.push('/login')
+        },
+        shipin(){
+            this.$router.push('/home')
+        },
+        tongji(){
+            this.$router.push('/main')
         }
     }
 }

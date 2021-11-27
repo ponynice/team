@@ -16,7 +16,8 @@ module.exports = {
     },
     // webpack-dev-server 相关配置  
     devServer: {
-        // 调试端口
-        // port: 8989
+      // 调试端口
+      // port: 8989
+      
     }
 }

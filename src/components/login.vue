@@ -8,7 +8,7 @@
                 <span class="big">登 录</span>
                 <span class="small" @click="toRegister">/注 册</span>
             </div>
-            <el-form :model="LoginForm" :rules="LoginFormRules">
+            <el-form :model="LoginForm" :rules="LoginFormRules" ref="LoginFormRef">
                 <!--用户名-->
                 <el-form-item class="yonghu"  prop="username">
                     <el-input v-model="LoginForm.username" placeholder="请输入用户名" prefix-icon="iconfont icon-yonghu1"></el-input>
@@ -18,7 +18,7 @@
                     <el-input v-model="LoginForm.password" placeholder="请输入密码" prefix-icon="iconfont icon-yuechi" type="password" prop="word"></el-input>
                 </el-form-item>
             </el-form>
-            <div class="buttom">
+            <div class="buttom" @click="Finish" >
                 <img src="../assets/渐变登录框.png" />
                 <span class="buttomspan">点 击 登 录</span> 
             </div>  
@@ -31,8 +31,8 @@ export default {
     data(){
         return{
             LoginForm:{
-                username:'',
-                password:''
+                'username':'',
+                'password':''
             },
             LoginFormRules:{
                 username:[
@@ -49,6 +49,51 @@ export default {
     methods:{
         toRegister(){
             this.$router.push('/register')
+        },
+        Finish(){
+           this.$refs.LoginFormRef.validate(async valid=>{
+               if(!valid)return
+               console.log(this.LoginForm.username)
+               console.log(this.LoginForm.password)
+               console.log(this.LoginForm)
+               let data=this.$qs.stringify({
+                   username:this.LoginForm.username,
+                   password:this.LoginForm.password})
+               /*this.LoginForm=JSON.stringify(this.LoginForm)
+               this.LoginForm=this.LoginForm.replace("{","")
+               this.LoginForm=this.LoginForm.replace("}","")
+               console.log(this.LoginForm)*/
+                await this.$axios({
+                    method:'post',
+                    url:'http://124.70.131.56:5003/login',
+                    data:data,
+                    headers: {
+                       'Content-Type': 'application/x-www-form-urlencoded',
+                      /*'Access-Control-Allow-Origin':'*',*/
+                      /*'Access-Control-Allow-Headers': '*'*/
+           /*' add_header Access-Control-Allow-Origin' :'*',
+    'add_header Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'add_header Access-Control-Allow-Headers': 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization'*/
+            }
+                })
+                .then(res => {
+                    console.log(res)
+               if(res.data.code==200){
+                   this.$message.success('登录成功')
+                   window.sessionStorage.setItem("token",res.data.token)
+                   /*退出window.sessionStorage.claer()*/
+                   this.$router.push('/first')
+               }
+               else this.$message(res.data.msg)
+            }).catch(err=>{
+                console.log(err)
+            })
+            /*const result=this.$axios.post('http://124.70.131.56:5003/login',this.LoginForm)
+            console.log(result)*/
+         
+           })
+                
+            
         }
     }
 }

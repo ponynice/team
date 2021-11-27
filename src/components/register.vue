@@ -8,7 +8,7 @@
                 <span class="big">注 册</span>
                 <span class="small" @click="toLogin">/登 录</span>
             </div>
-            <el-form :model="RegisterForm" :rules="RegisterFormRules">
+            <el-form :model="RegisterForm" :rules="RegisterFormRules" ref="RegisterFormRef">
                 <!--用户名-->
                 <el-form-item class="username"  prop="username">
                     <el-input v-model="RegisterForm.username" placeholder="请输入登录用户名" prefix-icon="iconfont icon-yonghu1" ></el-input>
@@ -22,7 +22,7 @@
                     <el-input v-model="RegisterForm.rnewpassword" placeholder="请确认密码" prefix-icon="iconfont icon-yaoshiup" type="password" ></el-input>
                 </el-form-item>
             </el-form>
-            <div class="buttom">
+            <div class="buttom" @click="Finish">
                 <img src="../assets/渐变登录框.png" />
                 <span class="buttomspan">点 击 注 册</span> 
             </div>  
@@ -68,6 +68,38 @@ export default {
     methods:{
         toLogin(){
             this.$router.push('/login')
+        },
+        Finish(){
+             this.$refs.RegisterFormRef.validate(async valid=>{
+               if(!valid)return
+               console.log(this.RegisterForm.username)
+               console.log(this.RegisterForm.newpassword)
+               let data=this.$qs.stringify({
+                   username:this.RegisterForm.username,
+                   password:this.RegisterForm.newpassword})
+                const result=await this.$axios({
+                    method:'post',
+                    url:'http://124.70.131.56:5003/register',
+                   data:data,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(res => {
+                    console.log(res)
+               if(res.data.code==200){
+                   this.$message.success('注册成功')
+                   this.$router.push('/first')
+               }
+               else this.$message(res.data.msg)
+            }).catch(err=>{
+                console.log(err)
+                console.log(result)
+                console.log(res)
+            })
+            
+         
+           })
         }
     }
 }
