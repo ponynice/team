@@ -127,7 +127,7 @@
         },
         methods: {
             back(){
-                this.$router.push('/first')
+                this.$router.push('/already_login')
             },
             getRowClass({ row, column, rowIndex, columnIndex }) {
                 return "background-color:transparent";

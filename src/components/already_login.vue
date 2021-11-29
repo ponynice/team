@@ -24,7 +24,7 @@
         </el-col>
         <el-col :span="10">
             <div>
-                <el-link @click="toLogin()">登录</el-link>
+                <el-link @click="toLogout()">退出</el-link>
             </div>
         </el-col>
       </el-row>
@@ -70,23 +70,31 @@
 <script>
 export default {
    data() {
-       return{}
+      return{}
    },
     methods:{
-        toLogin(){
-            this.$router.push('/login')
+        toLogout(){
+            this.$confirm('请问是否要退出该账户', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+        }).then(() => {
+            this.$message.success('退出成功')
+            /*window.sessionStorage.removeItem(token)*/
+            this.$router.push('/first')
+            })         
         },
         shipin(){
-            this.$message('请先进行登录')
+            this.$router.push('/home')
         },
         tongji(){
-            this.$message('请先进行登录')
+            this.$router.push('/main')
         },
         qiche(){
-            this.$message('请先进行登录')
+            this.$message('功能尚在开发')
         },
         mubiao(){
-            this.$message('请先进行登录')
+            this.$message('功能尚在开发')
         }
     }
 }

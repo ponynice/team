@@ -82,7 +82,7 @@ export default {
                    this.$message.success('登录成功')
                    window.sessionStorage.setItem("token",res.data.token)
                    /*退出window.sessionStorage.claer()*/
-                   this.$router.push('/first')
+                   this.$router.push('/already_login')
                }
                else this.$message(res.data.msg)
             }).catch(err=>{
