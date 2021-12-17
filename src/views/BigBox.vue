@@ -1,8 +1,5 @@
 <template>
   <section id="mainBox">
-    <div class="background">
-            <img src="../assets/bg.jpg"/>
-      </div>
     <div class="column">
       <div class="panel 1">
         <h2>流量变化</h2>
@@ -17,15 +14,35 @@
     </div>
     <div class="column">
       <h1 class="no">监控流量</h1>
-      <div class="video">
-        <video-player
-            class="video-player vjs-custom-skin"
-            ref="videoPlayer"
-            :playsinline="true"
-            :options="playerOptions"/>
+      <div>
+        <div class="video">
+          <video-player
+              class="video-player vjs-custom-skin"
+              ref="videoPlayer"
+              :playsinline="true"
+              :options="playerOptions"/>
+        </div>
+      <div style="width: 100px;height: 50px" v-show="uploading">
+        <img style="position: fixed; z-index: 100000; left: 39.6%; bottom: 2%" :src="images.uploading">
       </div>
+      </div>
+
       <input name="file" type="file" accept="image/jpg,image/png,video/mp4" @change="update" class="uploadB"/>
-      <button class="downloadB" @click='download' name="download">click here download</button>
+      <label title="查看历史上传视频" id="label_changeCur_input" style="color: white">
+        查看历史上传视频： 第
+        <input
+            aria-placeholder="请输入想要观看的第几个视频"
+            v-model.number="curPos"
+            @input="inputChange"
+            @keyup.enter="changeCur"
+            style="width:20px"
+        />
+        个，共{{fileNum}}个(●ˇ∀ˇ●)
+      </label>
+      <button @click="minusCur" id="label_minusCur_button">上一个</button>
+      <button @click="plusCur" id="label_plusCur_button">下一个</button>
+<!--      <button @click="changeCur" id="label_changeCur_button">确定</button>-->
+<!--      <button class="downloadB" @click='download' name="download">click here download</button>-->
     </div>
     <div class="column">
       <div class="panel 3">
@@ -51,39 +68,64 @@
 import echarts from 'echarts'
 // import https from '../api/https'
 import axios from "axios"
+
 export default {
   name: "BigBox",
+  // computed: {
+  //   curPos: {
+  //     get() {
+  //       let  value = this.curPos.replace(/[^\d]+/g, '');
+  //       if(value<=0){
+  //         return 0
+  //       }else if(value>=10){
+  //         return 10
+  //       }else{
+  //         return value
+  //       }
+  //     },
+  //     set(val) {
+  //       this.curPos = val;
+  //     }
+  //   }
+  //   },
   data() {
     return {
-      allDataX:[0,1, 2, 3, 4, 5],
-      flowChangeDataP:[3, 2, 3, 4, 5, 2],
-      flowChangeDataE:[4,1,5,5,6,7],
-      modifiedData:[3,6,6,8,2,4],
-      noHelmetData:[6,8,9,3,8,3],
-      fileName:'',
-      filePath:'',
+      images: {
+        uploading:require('../assets/uploading.gif'),
+      },
+      uploading: false,
       playerOptions: { // 视频常用设置
-        playbackRates: [0.7, 1.0, 1.5, 2.0], // 播放速度
-        autoplay: false, //如果true,浏览器准备好时开始回放。
-        muted: false,
-        loop: false,
-        preload: 'auto', // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
-        language: 'zh-CN',
-        aspectRatio: '4:3', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值
-        fluid: true, // 当true时，Video.js player将拥有流体大小
-        sources: [{
-          type: "video/mp4",// 这里的种类支持很多种：基本视频格式、直播、流媒体等，具体可以参看git网址项目
-          src: "http://domhttp.kksmg.com/2021/11/24/h264_720p_600k_31072-yangputv-20211124195700-2220-191719-600k_mp4.mp4" // url地址
-        }],
-        poster: "https://sm.ms/image/Fn5yQ6ogxkaujs7",
-        notSupportedMessage: '此视频暂无法播放，请稍后再试', // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
-        controlBar: {
-          timeDivider: true,
-          durationDisplay: true,
-          remainingTimeDisplay: false,
-          fullscreenToggle: true  // 全屏按钮
-        }
+      playbackRates: [0.7, 1.0, 1.5, 2.0], // 播放速度
+      autoplay: true, //如果true,浏览器准备好时开始回放。
+      muted: false,
+      loop: false,
+      preload: false, // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
+      language: 'zh-CN',
+      aspectRatio: '4:3', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值
+      fluid: true, // 当true时，Video.js player将拥有流体大小
+      sources: [{
+        type: "video/mp4",// 这里的种类支持很多种：基本视频格式、直播、流媒体等，具体可以参看git网址项目
+        src: null // url地址
+      }],
+      poster: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic3.zhimg.com%2F80%2Fv2-a29e70fd0e5998ed63e1872f9f9c355c_r.jpg&refer=http%3A%2F%2Fpic3.zhimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1641652071&t=4b02f7fba0e96dc54b168768c8daaab0",
+      notSupportedMessage: '此视频暂无法播放，请稍后再试', // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
+      controlBar: {
+        timeDivider: true,
+        durationDisplay: true,
+        remainingTimeDisplay: false,
+        fullscreenToggle: true  // 全屏按钮
       }
+    },
+      // blobVideo: null,
+      allDataX:[[0,1, 2, 3, 4, 5]],
+      flowChangeDataP:[[3, 2, 3, 4, 5, 2]],
+      flowChangeDataE:[[4,1,5,5,6,7]],
+      modifiedData:[[3,6,6,8,2,4]],
+      noHelmetData:[[6,8,9,3,8,3]],
+
+      filePath: [],
+      fileNum: 0,
+      curPos: 1
     };
   },
   filters: {
@@ -124,34 +166,58 @@ export default {
     //         }
     //       })
     // },
-    download() {   // 下载视频
-      /* eslint-disable no-undef */
-      let param = {"videopath":"runs/detect/exp4","videoname":'2.mp4'}
-      let config = {
-        headers: {'Content-Type': 'multipart/raw'},
-        responseType: 'blob'
+
+    // download() {   // 下载视频
+    //   /* eslint-disable no-undef */
+    //   let param = {"videopath":"runs/detect/exp4","videoname":'2.mp4'}
+    //   let config = {
+    //     headers: {'Content-Type': 'multipart/raw'},
+    //     responseType: 'blob'
+    //   }
+    //   // 添加请求头
+    //   axios.post('http://124.70.131.56:5003/download', param, config)
+    //       .then(res => {
+    //         console.log(res);
+    //         this.playerOptions["sources"][0]["src"] = res;
+    //       })
+    // },
+    minusCur() {
+      if(this.curPos<=1){
+        return
+      }else{
+        this.curPos--
+        this.changeCur()
       }
-      // 添加请求头
-      axios.post('http://124.70.131.56:5003/download', param, config)
-          .then(res => {
-              try {
-                let url = window.URL.createObjectURL(res);
-                let eleLink = document.createElement('a');
-                eleLink.href = url;
-                eleLink.download = this.fileName;
-                document.body.appendChild(eleLink);
-                eleLink.click();
-                window.URL.revokeObjectURL(url);
-              } catch (error) {
-                console.error('download function error!', error);
-              }
-          })
+    },
+    plusCur() {
+      if(this.curPos>=this.fileNum){
+        return
+      }else{
+        this.curPos++
+        this.changeCur()
+      }
+    },
+    inputChange(e) {
+      let val = e.target.value.replace(/[^\d]/g,'')
+      if(val>=this.fileNum) {
+        this.curPos = this.fileNum
+      }else{
+        this.curPos = val
+      }
+    },
+    changeCur() {
+      this.playerOptions["sources"][0]["src"] = this.filePath[this.curPos-1]
+      this.flowChangeChart()
+      this.modifiedChart()
+      this.noHelmetChart()
+      this.typesChart()
     },
     update(e) {   // 上传照片
+      this.uploading = true
+
       let file = e.target.files[0]
       /* eslint-disable no-undef */
       let param = new FormData()  // 创建form对象
-      this.fileName = file.name   //  存接下来要下载的文件名
       param.append('file', file)  // 通过append向form对象添加数据
       param.append('chunk', '0') // 添加form表单中其他数据
       console.log(param.get('file')) // FormData私有类对象，访问不到，可以通过get判断值是否传进去
@@ -161,12 +227,21 @@ export default {
       // 添加请求头
       axios.post('http://124.70.131.56:5003/upload', param, config)
           .then(res => {
+
+            this.uploading = false
+            console.log(res);
+            this.filePath[this.fileNum] = 'http://124.70.131.56:8080/'+res.data['path'];
+            this.playerOptions["sources"][0]["src"] = this.filePath[this.fileNum++];
+            this.curPos = this.fileNum;
+            console.log(('now filePath[' + this.curPos + '] == '+this.filePath[this.fileNum-1]));
+            // console.log("second"+this.playerOptions['sources'][0]["src"]);
+
             const dict = res.data['dict']
             console.log(dict)
-            this.allDataX = Object.keys(dict)
-            console.log(Object.keys(dict).length+"that is length\n")
+            this.allDataX[this.fileNum-1] = Object.keys(dict)
+            // console.log(Object.keys(dict).length+"that is length\n")
             for(let i = 0; i < Object.keys(dict).length; i++) {
-              this.allDataX[i] = this.allDataX[i]/50
+              this.allDataX[this.fileNum-1][i] = this.allDataX[this.fileNum-1][i]/50
             }
             let newFCPY = []
             let newFCEY = []
@@ -183,11 +258,11 @@ export default {
               //   console.log(key_deep+': '+dict_deep[key_deep]+'\n')
               // }
             }
-            this.flowChangeDataP = newFCPY
-            this.flowChangeDataE = newFCEY
-            this.modifiedData = newMY
-            this.noHelmetData = newHY
-            console.log('second: '+this.allDataX+'\n'+this.flowChangeDataP+' and '+this.flowChangeDataE)
+            this.flowChangeDataP[this.fileNum-1] = newFCPY
+            this.flowChangeDataE[this.fileNum-1] = newFCEY
+            this.modifiedData[this.fileNum-1] = newMY
+            this.noHelmetData[this.fileNum-1] = newHY
+            // console.log('second: '+this.allDataX+'\n'+this.flowChangeDataP+' and '+this.flowChangeDataE)
             this.flowChangeChart()
             this.modifiedChart()
             this.noHelmetChart()
@@ -208,7 +283,7 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: this.allDataX,
+          data: this.allDataX[this.curPos-1],
           // axisLine: {
           //   show: true
           // }
@@ -236,7 +311,7 @@ export default {
         series: [
           {
             name: '人流量',
-            data: this.flowChangeDataP,
+            data: this.flowChangeDataP[this.curPos-1],
             type: 'line',
             smooth: true,
             areaStyle: {
@@ -257,7 +332,7 @@ export default {
           },
           {
             name: '电动车流量',
-            data: this.flowChangeDataE,
+            data: this.flowChangeDataE[this.curPos-1],
             type: 'line',
             smooth: true,
             areaStyle: {
@@ -279,6 +354,7 @@ export default {
         ]
       }
       myChart.setOption(option)
+      console.log(this.flowChangeDataE);
     },
     modifiedChart() {
       let myChart = this.$echarts.init(document.getElementById('modified'))
@@ -292,7 +368,7 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: this.allDataX
+          data: this.allDataX[this.curPos-1]
         },
         yAxis: {
           type: 'value',
@@ -308,7 +384,7 @@ export default {
         },
         series: [
           {
-            data: this.modifiedData,
+            data: this.modifiedData[this.curPos-1],
             type: 'line',
             smooth: true,
             areaStyle: {
@@ -343,7 +419,7 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: this.allDataX
+          data: this.allDataX[this.curPos-1]
         },
         yAxis: {
           type: 'value',
@@ -394,7 +470,7 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: this.allDataX
+          data: this.allDataX[this.curPos-1]
         },
         yAxis: {
           type: 'value',
@@ -410,7 +486,7 @@ export default {
         },
         series: [
           {
-            data: this.noHelmetData,
+            data: this.noHelmetData[this.curPos-1],
             type: 'line',
             smooth: true,
             areaStyle: {
@@ -497,39 +573,39 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped>
 #mainBox {
   display: flex;
   min-width: 1024px;
-  max-width: 1980px;
-  padding: 10px 10px 0;
+  max-width: 1920px;
+  padding: 0.125rem 0.125rem 0;
   margin: 0 auto;
 }
 .column {
   flex: 3;
 }
 .column:nth-child(2) {
-  margin: 0 10px 10px;
+  margin: 0 0.125rem 0.1875rem;
   flex: 5;
 }
 .panel {
   position: relative;
-  height: 272px;
+  height: 3.4rem;
   border: 1px solid rgba(25, 286, 139, 0.27);
   background: url("../assets/line(1).png") rgba(255, 255, 255, 0.16);
-  padding: 0 15.04px 40px;
-  margin-bottom: 15.04px;
+  padding: 0 0.188rem 0.5rem;
+  margin-bottom: 0.188rem;
 }
 #panelLong {
-  height: 600px;
+  height: 7.5rem;
 }
 .panel h2 {
-  margin-top: 8px;
-  height: 48px;
+  margin-top: 0.1rem;
+  height: 0.6rem;
   color: white;
-  line-height: 48px;
+  line-height: 0.6rem;
   text-align: center;
-  font-size: 22.4px;
+  font-size: 0.28rem;
   font-weight: 600;
   letter-spacing: 4px;
 }
@@ -583,46 +659,114 @@ export default {
 }
 .no {
   background: rgba(101, 132, 226, 0.1);
-  padding: 15px;
-  height: 80px;
+  padding: 0.1875rem;
+  height: 1rem;
   margin: 0;
   letter-spacing: 4px;
 }
 #flowChange {
   height: 100%;
 }
-.video {
-  border: ridge 3px rgb(69, 32, 203);
-  position: absolute;
-  width: 892px;
-  top: 280px;
-  left: 560px;
-}
 .uploadB {
   position: absolute;
   background-color: rgba(255, 255, 255, 0.06);
-  width: 904px;
-  top: 960px;
-  left: 560px;
+  width: 11.3rem;
+  top: 12rem;
+  left: 7rem;
 }
 .downloadB {
   position: absolute;
   background-color: rgba(255, 255, 255, 0.6);
-  width: 240px;
-  top: 960px;
-  right: 560px;
+  width: 3rem;
+  top: 12rem;
+  right: 7rem;
 }
-.background{
-    width:100%;  
-    height:100%;  /**宽高100%是为了图片铺满屏幕 */
-    z-index:-1;
-    position: absolute;
+
+.video {
+  border: ridge 3px rgb(69, 32, 203);
+  position: absolute;
+  width: 11.2rem;
+  top: 3.4rem;
+  left: 7rem;
 }
-/*.video-player {*/
-/*  position: absolute;*/
-/*  top: 0;*/
-/*  left: 0;*/
-/*  height: 8rem;*/
-/*  width: 5rem;*/
-/*}*/
+
+/*播放按钮设置成宽高一致，圆形，居中*/
+.vjs-custom-skin > .video-js .vjs-big-play-button {
+  background-color: rgba(0,0,0,0.45);
+  font-size: 3.5em;
+  border-radius: 50%;
+  height: 2em !important;
+  line-height: 2em !important;
+  margin-top: -1em !important;
+  margin-left: -1em !important;
+  width: 2em !important;
+  outline: none;
+}
+
+.video-js .vjs-big-play-button .vjs-icon-placeholder:before {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/*control-bar布局时flex，通过order调整剩余时间的位置到进度条右边*/
+.vjs-custom-skin > .video-js .vjs-control-bar .vjs-remaining-time{
+  order:3 !important;
+}
+
+/*进度条背景轨道*/
+.video-js .vjs-slider{
+  border-radius: 1em;
+}
+
+/*进度条进度*/
+.vjs-custom-skin > .video-js .vjs-play-progress, .vjs-custom-skin > .video-js .vjs-volume-level{
+  border-radius: 1em;
+}
+
+/*鼠标进入播放器后，播放按钮颜色会变*/
+.video-js:hover .vjs-big-play-button, .vjs-custom-skin>.video-js .vjs-big-play-button:active, .vjs-custom-skin>.video-js .vjs-big-play-button:focus{
+  background-color: rgba(0,0,0,0.4) !important;
+}
+
+/*control bar*/
+.video-js .vjs-control-bar{
+  background-color: rgba(0,0,0,0.2) !important;
+}
+
+/*点击按钮时不显示蓝色边框*/
+.video-js .vjs-control-bar button{
+  outline: none;
+}
+
+#label_changeCur_input {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.06);
+  width: 11.3rem;
+  top: 12.5rem;
+  left: 7rem;
+}
+
+#label_changeCur_button {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.06);
+  top: 12.5rem;
+  right: 7rem;
+  color: white;
+}
+#label_minusCur_button {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.06);
+  top: 12.5rem;
+  right: 8rem;
+  color: white;
+}
+#label_plusCur_button {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.06);
+  top: 12.5rem;
+  right: 7rem;
+  color: white;
+}
 </style>

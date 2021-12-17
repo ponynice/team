@@ -80,7 +80,7 @@ export default {
                 type: 'warning'
         }).then(() => {
             this.$message.success('退出成功')
-            /*window.sessionStorage.removeItem(token)*/
+            window.sessionStorage.removeItem("token")
             this.$router.push('/first')
             })         
         },
